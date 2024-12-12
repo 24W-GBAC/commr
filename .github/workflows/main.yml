@@ -43,10 +43,10 @@ jobs:
             zip -r ${{ matrix.target }}.zip release
           elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
             cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME}
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           else
             cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME}
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           fi
 
       - name: Upload Release Assets
