@@ -39,14 +39,14 @@ jobs:
           mkdir -p release
 
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            cp target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}.exe release/
+            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
             zip -r ${{ matrix.target }}.zip release
           elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
-            cp target/${{ matrix.target }}/release/${{ env.BINARY_NAME }} release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release ${env.BINARY_NAME}
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME}
           else
-            cp target/${{ matrix.target }}/release/${{ env.BINARY_NAME }} release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release ${env.BINARY_NAME}
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME}
           fi
 
       - name: Upload Release Assets
