@@ -52,31 +52,38 @@ fn main() {
 
 // --------------------------------------------------
 fn run(args: Args) -> Result<()> {
-    let file1 = &args.file1;
-    let file2 = &args.file2;
+    let filename1 = &args.file1;
+    let filename2 = &args.file2;
 
-    if file1 == "-" && file2 == "-" {
+    if filename1 == "-" && filename2 == "-" {
         bail!(r#"Both input files cannot be STDIN ("-")"#);
     }
 
-    let case = |line: String| {
-        if args.insensitive {
-            line.to_lowercase()
-        } else {
-        line
+    // Collect lines into Vec<Result<String, io::Error>>
+    let first: Vec<String> = open(&filename1)?.lines().collect::<Result<_, _>>()?;
+    let second: Vec<String> = open(&filename2)?.lines().collect::<Result<_, _>>()?;
+
+    let mut both: Vec<String> = Vec::new();
+
+    // Find lines that are present in both files
+    for line1 in &first {
+        for line2 in &second {
+            if line1 == line2 {
+                both.push(line1.clone());
+            }
         }
-    };
+    }
 
-    let mut lines1 = open(file1)?.lines().map_while(Result::ok).map(case);
-    let mut lines2 = open(file2)?.lines().map_while(Result::ok).map(case);
+        // Filter lines equal to the content in both in `first` and `second`
+        let first_filtered: Vec<&String> = first.iter().filter(|&line| !both.contains(line)).collect();
+        let second_filtered: Vec<&String> = second.iter().filter(|&line| !both.contains(line)).collect();
 
-    let line1 = lines1.next();
-    let line2 = lines2.next();
-    println!("line1 = {:?}", line1);
-    println!("line2 = {:?}", line2);
+    // Print first_filtered, second_filtered, and both in three columns
+    println!("{:?} | {:?} | {:?}", first_filtered, second_filtered, both);
 
     Ok(())
 }
+
 
 // --------------------------------------------------
 fn open(filename: &str) -> Result<Box<dyn BufRead>> {
