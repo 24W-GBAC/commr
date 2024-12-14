@@ -3,6 +3,7 @@ use anyhow::{anyhow, bail, Result};
 use clap::{ArgAction, Parser};
 use std::{
     cmp::Ordering::*,
+    cmp::max,
     fs::File,
     io::{self, BufRead, BufReader},
 };
@@ -75,11 +76,20 @@ fn run(args: Args) -> Result<()> {
     }
 
         // Filter lines equal to the content in both in `first` and `second`
-        let first_filtered: Vec<&String> = first.iter().filter(|&line| !both.contains(line)).collect();
-        let second_filtered: Vec<&String> = second.iter().filter(|&line| !both.contains(line)).collect();
+        let mut first_filtered: Vec<&String> = first.iter().filter(|&line| !both.contains(line)).collect();
+        let mut second_filtered: Vec<&String> = second.iter().filter(|&line| !both.contains(line)).collect();
 
     // Print first_filtered, second_filtered, and both in three columns
-    println!("{:?} | {:?} | {:?}", first_filtered, second_filtered, both);
+    let binding = vec![first_filtered.len(), second_filtered.len(), both.len()];
+    let maxlen = binding.iter().max().expect("");
+    let empty = "".to_string();
+    first_filtered.resize(*maxlen, &empty);
+    second_filtered.resize(*maxlen, &empty);
+    both.resize(*maxlen, "".to_string());
+
+    for i in 0..*maxlen {
+        println!("{}\t{}\t{}", first_filtered[i], second_filtered[i], both[i]);
+    }
 
     Ok(())
 }
